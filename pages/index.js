@@ -1,85 +1,33 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
-
-export default function Home() {
-  const [members, setMembers] = useState([]);
-  const [name, setName] = useState('');
-  const [gender, setGender] = useState('남');
-  const [position, setPosition] = useState('');
-
-  // 1. 등록된 멤버들 불러오기
-  const fetchMembers = async () => {
-    const { data, error } = await supabase.from('members').select('*').order('name');
-    if (error) console.log('error', error);
-    else setMembers(data);
-  };
-
-  useEffect(() => {
-    fetchMembers();
-  }, []);
-
-  // 2. 새 멤버 추가하기
-  const addMember = async () => {
-    if (!name) return alert("이름을 입력해주세요!");
-    const { error } = await supabase.from('members').insert([{ name, gender, position }]);
-    
-    if (error) {
-      alert("등록 실패: " + error.message);
-    } else {
-      setName(''); 
-      setPosition('');
-      fetchMembers(); // 목록 새로고침
-    }
-  };
-
+export default function MainHome() {
   return (
-    <div style={{ padding: '40px', maxWidth: '800px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '20px' }}>🏐 GVT 멤버 관리</h1>
+    <div style={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      minHeight: '70vh',
+      textAlign: 'center'
+    }}>
+      {/* 🖼️ GVT 로고 이미지 들어가는 자리 */}
+      <img 
+        src="/gvt로고.jpg" 
+        alt="GVT LOGO" 
+        onError={(e) => {
+          // 혹시 아직 이미지 업로드를 안 하셨을 때 대신 뜰 임시 배구공 아이콘
+          e.target.style.display = 'none';
+        }}
+        style={{ maxWidth: '400px', width: '100%', marginBottom: '20px', borderRadius: '12px' }} 
+      />
       
-      {/* 입력 영역 */}
-      <div style={{ background: '#f3f4f6', padding: '20px', borderRadius: '8px', marginBottom: '30px', display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
-        <div>
-          <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px' }}>이름</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} style={{ border: '1px solid #ccc', padding: '8px', borderRadius: '4px' }} placeholder="이름 입력" />
-        </div>
-        <div>
-          <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px' }}>성별</label>
-          <select value={gender} onChange={(e) => setGender(e.target.value)} style={{ border: '1px solid #ccc', padding: '8px', borderRadius: '4px' }}>
-            <option value="남">남</option>
-            <option value="여">여</option>
-          </select>
-        </div>
-        <div style={{ flex: 1 }}>
-          <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px' }}>포지션 (자유입력)</label>
-          <input value={position} onChange={(e) => setPosition(e.target.value)} style={{ border: '1px solid #ccc', padding: '8px', borderRadius: '4px', width: '100%' }} placeholder="예: 세터, 센터" />
-        </div>
-        <button onClick={addMember} style={{ background: '#2563eb', color: 'white', padding: '10px 20px', borderRadius: '4px', border: 'none', fontWeight: 'bold', cursor: 'pointer' }}>등록</button>
-      </div>
-
-      {/* 명단 출력 영역 */}
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr style={{ borderBottom: '2px solid #ddd' }}>
-            <th style={{ textAlign: 'left', padding: '10px' }}>성별</th>
-            <th style={{ textAlign: 'left', padding: '10px' }}>이름</th>
-            <th style={{ textAlign: 'left', padding: '10px' }}>포지션</th>
-          </tr>
-        </thead>
-        <tbody>
-          {members.map(m => (
-            <tr key={m.id} style={{ borderBottom: '1px solid #eee' }}>
-              <td style={{ padding: '10px' }}>{m.gender === '남' ? '♂️' : '♀️'}</td>
-              <td style={{ padding: '10px', fontWeight: 'bold' }}>{m.name}</td>
-              <td style={{ padding: '10px', color: '#666' }}>{m.position}</td>
-            </tr>
-          ))}
-          {members.length === 0 && (
-            <tr>
-              <td colSpan="3" style={{ padding: '20px', textAlign: 'center', color: '#999' }}>아직 등록된 멤버가 없습니다.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      {/* 이미지 없을 때 뜨는 백업 로고 마크 */}
+      <div style={{ fontSize: '80px', marginBottom: '10px' }}>🏐</div>
+      
+      <h1 style={{ fontSize: '36px', fontWeight: 'bold', color: '#1e3a8a', margin: '10px 0' }}>
+        GVT VOLLEYBALL CLUB
+      </h1>
+      <p style={{ color: '#64748b', fontSize: '18px' }}>
+        기록과 정산을 한 눈에 관리하는 우리 팀 아카이빙 센터
+      </p>
     </div>
   );
 }
